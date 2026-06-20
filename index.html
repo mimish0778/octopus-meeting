@@ -672,11 +672,13 @@
   const apiKeySave = document.getElementById('apiKeySave');
   const apiKeyClear = document.getElementById('apiKeyClear');
 
+  // APIキーはハードコード済みじゃん
+  const HARDCODED_API_KEY = 'REDACTED_API_KEY';
+
   const STORAGE_KEY = 'tako_gemini_api_key';
 
   function getStoredKey(){
-    try{ return localStorage.getItem(STORAGE_KEY) || ''; }
-    catch(e){ return ''; }
+    return HARDCODED_API_KEY;
   }
   function setStoredKey(key){
     try{ localStorage.setItem(STORAGE_KEY, key); }catch(e){}
@@ -686,12 +688,8 @@
   }
 
   function refreshKeyPanel(){
-    const key = getStoredKey();
-    if(key){
-      keyPanel.classList.add('is-set');
-    }else{
-      keyPanel.classList.remove('is-set');
-    }
+    // APIキー埋め込み済みなのでパネルは常に非表示じゃん
+    keyPanel.style.display = 'none';
   }
   refreshKeyPanel();
 
@@ -972,7 +970,122 @@
     }
   }
 
-  goBtn.addEventListener('click', handleSubmit);
+  // ===== アホっぽいBGM (Web Audio API) =====
+  (function(){
+    let audioCtx = null;
+    let bgmPlaying = false;
+    let scheduleTimeout = null;
+
+    // ファミコン風のバカっぽいメロディー音符 (周波数Hz, 長さ秒)
+    const MELODY = [
+      [523.25, 0.12], [523.25, 0.12], [783.99, 0.12], [783.99, 0.12],
+      [880.00, 0.12], [880.00, 0.12], [783.99, 0.24],
+      [698.46, 0.12], [698.46, 0.12], [659.25, 0.12], [659.25, 0.12],
+      [587.33, 0.12], [587.33, 0.12], [523.25, 0.24],
+      [783.99, 0.12], [783.99, 0.12], [698.46, 0.12], [698.46, 0.12],
+      [659.25, 0.12], [659.25, 0.12], [587.33, 0.24],
+      [783.99, 0.12], [783.99, 0.12], [698.46, 0.12], [698.46, 0.12],
+      [659.25, 0.12], [659.25, 0.12], [587.33, 0.24],
+      [523.25, 0.12], [523.25, 0.12], [783.99, 0.12], [783.99, 0.12],
+      [880.00, 0.12], [880.00, 0.12], [783.99, 0.24],
+      [698.46, 0.12], [698.46, 0.12], [659.25, 0.12], [659.25, 0.12],
+      [587.33, 0.12], [587.33, 0.12], [523.25, 0.24],
+      [659.25, 0.12], [523.25, 0.12], [587.33, 0.12], [493.88, 0.12],
+      [523.25, 0.48],
+    ];
+
+    function playMelody(){
+      if(!audioCtx) return;
+      let t = audioCtx.currentTime + 0.05;
+      for(const [freq, dur] of MELODY){
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.9);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + dur);
+        t += dur;
+      }
+      const totalDur = MELODY.reduce((s, [,d]) => s + d, 0);
+      scheduleTimeout = setTimeout(playMelody, totalDur * 1000 - 200);
+    }
+
+    function startBGM(){
+      if(bgmPlaying) return;
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      bgmPlaying = true;
+      playMelody();
+    }
+
+    goBtn.addEventListener('click', handleSubmit);
+
+  // ===== アホっぽいBGM (Web Audio API) =====
+  (function(){
+    let audioCtx = null;
+    let bgmPlaying = false;
+    let scheduleTimeout = null;
+
+    // ファミコン風のバカっぽいメロディー音符 (周波数Hz, 長さ秒)
+    const MELODY = [
+      [523.25, 0.12], [523.25, 0.12], [783.99, 0.12], [783.99, 0.12],
+      [880.00, 0.12], [880.00, 0.12], [783.99, 0.24],
+      [698.46, 0.12], [698.46, 0.12], [659.25, 0.12], [659.25, 0.12],
+      [587.33, 0.12], [587.33, 0.12], [523.25, 0.24],
+      [783.99, 0.12], [783.99, 0.12], [698.46, 0.12], [698.46, 0.12],
+      [659.25, 0.12], [659.25, 0.12], [587.33, 0.24],
+      [783.99, 0.12], [783.99, 0.12], [698.46, 0.12], [698.46, 0.12],
+      [659.25, 0.12], [659.25, 0.12], [587.33, 0.24],
+      [523.25, 0.12], [523.25, 0.12], [783.99, 0.12], [783.99, 0.12],
+      [880.00, 0.12], [880.00, 0.12], [783.99, 0.24],
+      [698.46, 0.12], [698.46, 0.12], [659.25, 0.12], [659.25, 0.12],
+      [587.33, 0.12], [587.33, 0.12], [523.25, 0.24],
+      [659.25, 0.12], [523.25, 0.12], [587.33, 0.12], [493.88, 0.12],
+      [523.25, 0.48],
+    ];
+
+    function playMelody(){
+      if(!audioCtx) return;
+      let t = audioCtx.currentTime + 0.05;
+      for(const [freq, dur] of MELODY){
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.9);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + dur);
+        t += dur;
+      }
+      const totalDur = MELODY.reduce((s, [,d]) => s + d, 0);
+      scheduleTimeout = setTimeout(playMelody, totalDur * 1000 - 200);
+    }
+
+    function startBGM(){
+      if(bgmPlaying) return;
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      bgmPlaying = true;
+      playMelody();
+    }
+
+    // ページタップ/クリックで開始
+    const startHandler = function(){
+      startBGM();
+      document.removeEventListener('click', startHandler);
+    };
+    document.addEventListener('click', startHandler);
+  })();
+
   retryBtn.addEventListener('click', handleSubmit);
 
   problemInput.addEventListener('keydown', (e) => {
