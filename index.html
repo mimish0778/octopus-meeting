@@ -83,6 +83,26 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 </style>
 </head>
 <body>
+<!-- APIキー入力オーバーレイ -->
+<div id="key-overlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(13,27,42,.97);align-items:center;justify-content:center;">
+  <div style="background:#162032;border:1.5px solid #1e2e42;border-radius:20px;padding:36px 28px;max-width:380px;width:90%;display:flex;flex-direction:column;gap:16px;">
+    <div style="font-size:2rem;text-align:center;">🌮🐙</div>
+    <div style="font-size:1.2rem;font-weight:900;text-align:center;color:#ffd166;">Gemini APIキーを入力</div>
+    <div style="font-size:.82rem;color:#8899aa;line-height:1.7;">
+      <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ff6b35;">Google AI Studio</a> でキーを取得して貼り付けてください。<br>
+      キーはこのブラウザにのみ保存され、外部には送信されません。
+    </div>
+    <input id="key-input" type="password" placeholder="AIzaSy..."
+      style="padding:12px 14px;background:#0d1b2a;border:1.5px solid #1e2e42;border-radius:10px;color:#f0f4f8;font-size:1rem;outline:none;"
+      onkeydown="if(event.key==='Enter')startWithKey()">
+    <div id="key-error" style="color:#ef476f;font-size:.82rem;min-height:18px;"></div>
+    <button onclick="startWithKey()" style="background:#ff6b35;color:#fff;padding:14px;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;">
+      ゲームスタート 🐙
+    </button>
+    <div style="font-size:.72rem;color:#8899aa;text-align:center;">キーはlocalStorageに保存されます（次回から入力不要）</div>
+  </div>
+</div>
+
 <canvas id="stars"></canvas>
 <div id="app">
   <div id="title-block">
@@ -157,9 +177,9 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 })();
 
 /* ===== CONFIG ===== */
-var API_KEY = 'REDACTED_API_KEY';
+var API_KEY = '';  // 起動時に入力
 var MODEL = 'gemini-2.5-flash-lite';
-var GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=' + API_KEY;
+var GEMINI_URL = '';
 var RALLY_WIN = 10;
 
 /* ===== IMAGES (base64 placeholder - replaced by build script) ===== */
@@ -347,8 +367,32 @@ window.addEventListener('DOMContentLoaded', function() {
   $('tako-img').src     = 'data:image/png;base64,' + TAKO_B64;
   $('taco-on-head').src = 'data:image/png;base64,' + TACOS_B64;
   initDots();
-  startRound();
+
+  // localStorageから保存済みキーを読み込む
+  var saved = localStorage.getItem('gemini_api_key');
+  if (saved && saved.startsWith('AIza')) {
+    API_KEY = saved;
+    GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=' + API_KEY;
+    startRound();
+  } else {
+    var overlay = $('key-overlay');
+    overlay.style.display = 'flex';
+    setTimeout(function() { $('key-input').focus(); }, 100);
+  }
 });
+
+function startWithKey() {
+  var key = $('key-input').value.trim();
+  if (!key.startsWith('AIza')) {
+    $('key-error').textContent = '正しいAPIキーを入力してください（AIzaSy... の形式）';
+    return;
+  }
+  API_KEY = key;
+  GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=' + API_KEY;
+  localStorage.setItem('gemini_api_key', key);
+  $('key-overlay').style.display = 'none';
+  startRound();
+}
 
 /* ===== ROUND ===== */
 async function startRound() {
