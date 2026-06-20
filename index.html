@@ -143,10 +143,10 @@
 
   .bubble{
     position:absolute;
-    left: 50%;
-    bottom: 100%;
-    margin-bottom: 16px;
-    transform: translateX(-20%) translateY(6px) scale(0.9);
+    left: 100%;
+    bottom: 60%;
+    margin-left: 14px;
+    transform: translateX(-8px) translateY(6px) scale(0.9);
     background: #fff;
     border: 2.5px solid var(--ink);
     border-radius: 18px;
@@ -159,32 +159,46 @@
     opacity:0;
     transition: all 0.35s cubic-bezier(.2,1.5,.4,1);
   }
-  .bubble.show{ opacity:1; transform: translateX(-20%) translateY(0) scale(1); }
+  .bubble.show{ opacity:1; transform: translateX(0) translateY(0) scale(1); }
   .bubble::after{
     content:"";
     position:absolute;
-    left: 34px;
-    bottom: -16px;
+    left: -16px;
+    bottom: 18px;
     width: 0; height:0;
     border: 8px solid transparent;
-    border-top-color: var(--ink);
+    border-right-color: var(--ink);
   }
   .bubble::before{
     content:"";
     position:absolute;
-    left: 35.5px;
-    bottom: -12.5px;
+    left: -12.5px;
+    bottom: 19.5px;
     width: 0; height:0;
     border: 6.5px solid transparent;
-    border-top-color: #fff;
+    border-right-color: #fff;
     z-index:1;
   }
 
   @media (max-width: 560px){
-    .bubble{ left: 50%; transform: translateX(-50%) translateY(6px) scale(0.9); }
-    .bubble.show{ transform: translateX(-50%) translateY(0) scale(1); }
-    .bubble::after{ left: 50%; margin-left: -8px; }
-    .bubble::before{ left: 50%; margin-left: -6.5px; }
+    .bubble{
+      left: 50%;
+      bottom: 100%;
+      margin-left: 0;
+      margin-bottom: 16px;
+      transform: translateX(-20%) translateY(6px) scale(0.9);
+    }
+    .bubble.show{ transform: translateX(-20%) translateY(0) scale(1); }
+    .bubble::after{
+      left: 34px; bottom: -16px; right:auto;
+      border-right-color: transparent;
+      border-top-color: var(--ink);
+    }
+    .bubble::before{
+      left: 35.5px; bottom: -12.5px; right:auto;
+      border-right-color: transparent;
+      border-top-color: #fff;
+    }
   }
 
   /* ===== 入力エリア ===== */
