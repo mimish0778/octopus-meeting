@@ -907,13 +907,6 @@
     const problem = problemInput.value.trim();
     errorMsg.classList.remove('show');
 
-    if(!getStoredKey()){
-      errorMsg.textContent = 'まずGemini APIキーを入力して「保存して使う」を押してね。';
-      errorMsg.classList.add('show');
-      apiKeyInput.focus();
-      showBubble('キー？まだもらってないんだけど');
-      return;
-    }
 
     if(!problem){
       errorMsg.textContent = 'お悩みを入力してね。どんな小さなことでも大丈夫だよ。';
