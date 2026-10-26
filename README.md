@@ -53,7 +53,7 @@ git clone https://github.com/mimish0778/octopus-meeting.git
 ブラウザ（index.html） ──> Cloudflare Workers（API プロキシ） ──> Gemini API
 ```
 
-- Gemini API への直接アクセスを避けるため、ブラウザは`https://octopus-meeting.mimish0778.workers.dev` に置いた Cloudflare Workers のプロキシにリクエストを送ります。プロキシのコードはこのリポジトリには含まれていません。
+- Gemini API への直接アクセスを避けるため、ブラウザは `https://octopus-meeting.mimish0778.workers.dev` に置いた Cloudflare Workers のプロキシにリクエストを送ります。プロキシのコードはこのリポジトリには含まれていません。
 - リクエストは Gemini API の `generateContent` と同じ形式で、キャラクター設定と 8 つの視点を指示するシステムプロンプトと、入力された悩みを送ります。
 - 応答は JSON（`responseMimeType: "application/json"`）で受け取り、次の形をしています。
 
