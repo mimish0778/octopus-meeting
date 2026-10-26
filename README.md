@@ -6,6 +6,8 @@
 
 **デモ:** https://mimish0778.github.io/octopus-meeting/
 
+<img src="images/screenshot.png" alt="たこ先生の8本足会議の入力画面" width="640">
+
 ## 機能
 
 - 入力した悩みに対して、8 つの視点からアイデアを 1 つずつ提案（各アイデアにタイトルと 2〜3 文の説明）
