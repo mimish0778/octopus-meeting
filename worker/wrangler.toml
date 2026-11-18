@@ -1,0 +1,12 @@
+name = "octopus-meeting"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+# IP アドレスごとに 60 秒あたり 5 回まで（超えると 429 を返す）
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
