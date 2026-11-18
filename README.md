@@ -58,6 +58,20 @@ git clone https://github.com/mimish0778/octopus-meeting.git
 - Gemini API への直接アクセスを避けるため、ブラウザは `https://octopus-meeting.mimish0778.workers.dev` に置いた Cloudflare Workers のプロキシにリクエストを送ります。プロキシのコードは [`worker/`](worker/) にあります。
 - リクエストは Gemini API の `generateContent` と同じ形式で、キャラクター設定と 8 つの視点を指示するシステムプロンプトと、入力された悩みを送ります。
 - プロキシは、ブラウザから届いたうち悩みのテキスト（1,000 文字まで）だけを使い、システムプロンプトと生成設定は `worker/proxy.js` に固定したものを使います。プロキシを汎用の Gemini API として使われないようにするためです。あわせて、送信元（公開ページとローカル）を限定し、IP アドレスごとに 1 分あたり 5 回までに制限しています。
+- 応答は JSON（`responseMimeType: "application/json"`）で受け取り、次の形をしています。
+
+  ```json
+  {
+    "ideas": [
+      { "title": "短いキャッチタイトル", "body": "アイデアの説明" }
+    ],
+    "summary": "たこ先生からのひとことまとめ"
+  }
+  ```
+
+  `ideas` は視点の順に 8 個並び、画面には先頭から 8 個までを表示します。
+
+- プロキシが 400 または 403 を返したときはプロキシ側の設定（API キーなど）の問題、429 のときは混雑か利用上限として、それぞれエラーメッセージを表示します。
 
 ### プロキシのデプロイ
 
@@ -74,20 +88,6 @@ npx wrangler deploy
 ```bash
 node --test worker/index.test.mjs
 ```
-- 応答は JSON（`responseMimeType: "application/json"`）で受け取り、次の形をしています。
-
-  ```json
-  {
-    "ideas": [
-      { "title": "短いキャッチタイトル", "body": "アイデアの説明" }
-    ],
-    "summary": "たこ先生からのひとことまとめ"
-  }
-  ```
-
-  `ideas` は視点の順に 8 個並び、画面には先頭から 8 個までを表示します。
-
-- プロキシが 400 または 403 を返したときはプロキシ側の設定（API キーなど）の問題、429 のときは混雑か利用上限として、それぞれエラーメッセージを表示します。
 
 ## 技術構成
 
