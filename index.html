@@ -830,8 +830,8 @@
       loadingZone.classList.remove('show');
 
       if(err && (err.status === 400 || err.status === 403)){
-        errorMsg.textContent = 'APIキーが正しくないか、権限がないみたい。キーを確認してね。';
-        showBubble('そのキー、違うじゃん。ちゃんと確認してよ');
+        errorMsg.textContent = 'サーバー側でリクエストを受け付けられなかったみたい。時間をおいてもう一度試してね。';
+        showBubble('サーバーの調子が悪いじゃん。ちょっと待ってよ');
       }else if(err && err.status === 429){
         errorMsg.textContent = '混み合っているか、利用上限みたい。少し時間をおいて試してね。';
         showBubble('混んでるじゃん。少し待ってよ');
