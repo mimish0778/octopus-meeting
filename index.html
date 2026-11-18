@@ -191,6 +191,11 @@
   }
 
   @media (max-width: 560px){
+    /* 吹き出しをタコの上に出すので、その分の余白を空けて見出しと重ならないようにする */
+    .octo-wrap{ margin-top: 84px; top: 84px; }
+    .octo-wrap::before{ top: -90px; height: 260px; }
+    .octo-stage{ width: 150px; }
+    .octo-img{ width: 150px; height: 150px; }
     .bubble{
       left: 50%;
       bottom: 100%;
